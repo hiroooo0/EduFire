@@ -19,35 +19,30 @@
             
             <div class="main-container-inner">
                 <!-- Welcome Banner Card -->
-                <section class="hero-section">
-                    <h1 class="hero-title" th:text="'Halo, ' + ${user != null ? user.name : 'Budi'} + '!'">Halo, Budi!</h1>
-                    <p class="hero-subtitle">Lanjutkan perjalanan belajarmu untuk menjadi pahlawan keselamatan yang handal hari ini.</p>
+                <section class="hero-section" style="background-color: #2b4380; background-image: none; padding: 32px; border-radius: var(--radius-lg);">
+                    <h1 class="hero-title" th:text="'Halo, ' + ${user != null ? user.name : 'Budi'} + '!'" style="color: white; font-size: 2rem;">Halo, Budi!</h1>
+                    <p class="hero-subtitle" style="color: rgba(255,255,255,0.8); margin-bottom: 24px; font-size: 1rem;">Lanjutkan perjalanan belajarmu untuk menjadi pahlawan keselamatan.</p>
+                    
+                    <div style="background-color: #1e315e; padding: 16px 20px; border-radius: var(--radius-sm); margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span style="color: white; font-weight: 500;">Progress Keseluruhan</span>
+                            <span style="color: #f97316; font-weight: 700;" th:text="${user != null ? user.progressPercentage : 65} + '%'">65%</span>
+                        </div>
+                        <div class="progress-bar-bg" style="height: 8px; background-color: rgba(255,255,255,0.1); border-radius: 4px;">
+                            <div class="progress-bar-orange" th:style="'width: ' + ${user != null ? user.progressPercentage : 65} + '%; background-color: #f97316; height: 100%; border-radius: 4px;'"></div>
+                        </div>
+                    </div>
+                    
+                    <button style="width: 100%; padding: 14px; background-color: #f97316; color: white; border: none; border-radius: var(--radius-sm); font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Lanjutkan Belajar
+                    </button>
                 </section>
 
                 <!-- Dashboard Content Grid -->
-                <div class="dashboard-grid">
+                <div class="dashboard-grid" style="margin-top: 32px;">
                     <!-- Left Main Column -->
                     <div class="grid-main">
-                        <!-- Progress & Statistics Panel -->
-                        <div class="section-header">
-                            <h2 class="section-title">Progres Keseluruhan</h2>
-                        </div>
-                        
-                        <div class="continue-card" style="padding: 24px;">
-                            <div class="continue-content">
-                                <div class="progress-info">
-                                    <span class="progress-label" style="font-weight:700; font-size:1rem;">Progres Belajar Keseluruhan</span>
-                                    <span class="progress-text" style="font-weight:800; font-size:1.4rem;" th:text="${user != null ? user.progressPercentage : 65} + '%'">65%</span>
-                                </div>
-                                <div class="progress-bar-bg" style="height: 12px; margin-top: 8px;">
-                                    <div class="progress-bar-orange" th:style="'width: ' + ${user != null ? user.progressPercentage : 65} + '%'"></div>
-                                </div>
-                                <div style="display:flex; align-items:center; gap:8px; margin-top:12px; font-size:0.85rem; color:var(--color-text-muted);">
-                                    <span>🔥</span>
-                                    <span>3 dari 5 modul keselamatan telah diselesaikan minggu ini</span>
-                                </div>
-                            </div>
-                        </div>
 
                         <!-- Modul Belajar Section -->
                         <div>
@@ -58,34 +53,19 @@
                             <div class="modules-grid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px;">
                                 <!-- Loop recent modules -->
                                 <div th:each="moduleItem : ${recentModules}" class="module-card" th:onclick="'window.location.href=\'/materi/' + ${moduleItem.id} + '\''">
-                                    <div class="card-header">
-                                        <div class="card-icon-container" th:classappend="${moduleItem.iconClass}">
+                                    <div class="card-header" style="margin-bottom: 12px;">
+                                        <div class="card-icon-container" th:classappend="${moduleItem.iconClass}" style="border-radius: 50%;">
                                             <div th:utext="${moduleItem.svgIcon}"></div>
-                                        </div>
-                                        <div class="card-badges">
-                                            <span th:if="${moduleItem.isNew}" class="badge-new-orange">Baru</span>
-                                            <span class="badge-difficulty" th:classappend="${#strings.contains(moduleItem.title, 'APAR') || #strings.contains(moduleItem.title, 'P3K') || #strings.contains(moduleItem.title, 'Risiko') ? 'difficulty-menengah' : 'difficulty-pemula'}"
-                                                  th:text="${#strings.contains(moduleItem.title, 'APAR') || #strings.contains(moduleItem.title, 'P3K') || #strings.contains(moduleItem.title, 'Risiko') ? 'Menengah' : 'Pemula'}">Pemula</span>
                                         </div>
                                     </div>
                                     <div class="card-body">
                                         <h3 class="card-title" th:text="${moduleItem.title}">Mengenal APAR</h3>
-                                        <p class="card-description" th:text="${moduleItem.description}">Pelajari jenis dan cara penggunaan alat pemadam api ringan dengan benar.</p>
+                                        <p class="card-description" th:text="${moduleItem.description}">Pelajari jenis dan cara penggunaan alat pemadam api dengan benar.</p>
                                     </div>
-                                    <div class="card-footer" style="border-top: 1px solid var(--color-border); padding-top: 16px;">
-                                        <div class="card-meta">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="meta-icon" style="width:16px;height:16px;">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            <span th:text="${moduleItem.durationMinutes} + ' Menit'">15 Menit</span>
-                                        </div>
+                                    <div class="card-footer" style="padding-top: 16px; border-top: none;">
                                         <div class="card-progress">
-                                            <div class="progress-info">
-                                                <span class="progress-label">Progres</span>
-                                                <span class="progress-text" th:text="${moduleItem.progressPercentage} + '%'">40%</span>
-                                            </div>
-                                            <div class="progress-bar-bg">
-                                                <div class="progress-bar-orange" th:style="'width: ' + ${moduleItem.progressPercentage} + '%'"></div>
+                                            <div class="progress-bar-bg" style="height: 6px; background-color: #f0f0f0; border-radius: 3px;">
+                                                <div class="progress-bar-orange" th:style="'width: ' + ${moduleItem.progressPercentage} + '%; height: 100%; border-radius: 3px;' + (${#strings.contains(moduleItem.title, 'APAR')} ? 'background-color: #f97316;' : 'background-color: #3b82f6;')"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -98,32 +78,41 @@
                             <div class="section-header" style="margin-bottom: 20px;">
                                 <h2 class="section-title">Pencapaian Gamifikasi</h2>
                             </div>
-                            <div class="achievement-card">
-                                <div class="achievement-icon-container">
-                                    <!-- Trophy Icon SVG -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5a3 3 0 00-3-3H9a3 3 0 00-3 3v2a3 3 0 003 3h3zm0 0h4a3 3 0 003-3V5a3 3 0 00-3-3h-1a3 3 0 00-3 3v3zm0 5H8a5 5 0 01-5-5h14a5 5 0 01-5 5z" /></svg>
-                                </div>
-                                <div class="achievement-details">
-                                    <h3 class="achievement-title" th:text="${user != null ? user.title : 'Pahlawan Pemula'}">Pahlawan Pemula</h3>
-                                    <p class="achievement-subtitle" th:text="'Level ' + ${user != null ? user.level : 3} + ' &bull; ' + ${user != null ? user.points : 159} + ' Poin'">Level 3 &bull; 159 Poin</p>
-                                    
-                                    <!-- Badges List -->
-                                    <div class="badges-list">
-                                        <!-- Badge 1: Flame (unlocked if points >= 50) -->
-                                        <div class="badge-item" th:classappend="${user != null && user.points >= 50 ? 'unlocked' : ''}" title="Mendaftar Akun (Terbuka)">🔥</div>
-                                        <!-- Badge 2: Star (unlocked if points >= 100) -->
-                                        <div class="badge-item" th:classappend="${user != null && user.points >= 100 ? 'unlocked' : ''}" title="Menyelesaikan Kuis Pertama (Terbuka)">⭐</div>
-                                        <!-- Badge 3: Shield (unlocked if points >= 200) -->
-                                        <div class="badge-item" th:classappend="${user != null && user.points >= 200 ? 'unlocked' : ''}" title="Menyelesaikan Semua Modul (Terkunci)">🛡️</div>
-                                        <!-- Badge 4: Medal (unlocked if points >= 250) -->
-                                        <div class="badge-item" th:classappend="${user != null && user.points >= 250 ? 'unlocked' : ''}" title="Skor Sempurna Kuis (Terkunci)">🏅</div>
-                                        <!-- Badge 5: Trophy (unlocked if points >= 300) -->
-                                        <div class="badge-item" th:classappend="${user != null && user.points >= 300 ? 'unlocked' : ''}" title="Pahlawan Sejati (Terkunci)">🏆</div>
+                            <div class="achievement-card" style="flex-direction: column; align-items: stretch;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                                    <div style="display: flex; align-items: center; gap: 16px;">
+                                        <div class="achievement-icon-container" style="background-color: #dbeafe; border-color: transparent;">
+                                            <!-- Simple badge/star Icon SVG -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#d97706" stroke-width="2" style="width:28px;height:28px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5a3 3 0 00-3-3H9a3 3 0 00-3 3v2a3 3 0 003 3h3zm0 0h4a3 3 0 003-3V5a3 3 0 00-3-3h-1a3 3 0 00-3 3v3zm0 5H8a5 5 0 01-5-5h14a5 5 0 01-5 5z" /></svg>
+                                        </div>
+                                        <div class="achievement-details">
+                                            <h3 class="achievement-title" th:text="${user != null ? user.title : 'Pahlawan Pemula'}">Pahlawan Pemula</h3>
+                                            <p class="achievement-subtitle" th:text="${user != null ? user.points : 150} + ' Poin'" style="color: #4b5563;">150 Poin</p>
+                                        </div>
+                                    </div>
+                                    <div class="rank-display">
+                                        <span class="rank-title" style="color: #374151; font-weight: 500; font-size: 0.8rem; text-transform: none;">Peringkat</span>
+                                        <div class="rank-number" th:text="${user != null ? user.rank : '#12'}" style="color: #1e3a8a; font-size: 2rem;">#12</div>
                                     </div>
                                 </div>
-                                <div class="rank-display">
-                                    <span class="rank-title">Peringkat</span>
-                                    <div class="rank-number" th:text="${user != null ? user.rank : '#12'}">#12</div>
+                                
+                                <div class="badges-list" style="display: flex; justify-content: space-between; margin-top: 24px; padding: 0 10px;">
+                                    <!-- Badge 1 -->
+                                    <div class="badge-item" style="width: 44px; height: 44px; border-radius: 50%; background-color: #ffedd5; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🔥</div>
+                                    <!-- Badge 2 -->
+                                    <div class="badge-item" style="width: 44px; height: 44px; border-radius: 50%; background-color: #ffedd5; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">⭐</div>
+                                    <!-- Badge 3 locked -->
+                                    <div class="badge-item" style="width: 44px; height: 44px; border-radius: 50%; background-color: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" stroke-width="2" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                    </div>
+                                    <!-- Badge 4 locked -->
+                                    <div class="badge-item" style="width: 44px; height: 44px; border-radius: 50%; background-color: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" stroke-width="2" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                    </div>
+                                    <!-- Badge 5 locked -->
+                                    <div class="badge-item" style="width: 44px; height: 44px; border-radius: 50%; background-color: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" stroke-width="2" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                    </div>
                                 </div>
                             </div>
                         </div>
