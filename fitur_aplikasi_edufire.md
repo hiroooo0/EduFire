@@ -35,4 +35,5 @@ Fitur berbasis lokasi yang sangat krusial untuk kesiapsiagaan di dunia nyata:
 ---
 
 ## 3. Tema Bencana Kebakaran
+
 Tema bencana kebakaran merupakan elemen inti dalam edufire yang diterapkan secara konsisten di seluruh aplikasi untuk memperkuat pesan edukasi dan kesiapsiagaan. Hal ini terlihat dengan jelas melalui identitas visualnya yang menggunakan skema warna hangat terkait api dan keselamatan, seperti merah darurat, oranye peringatan, dan kuning kewaspadaan, yang juga tercermin pada *class diagram* melalui penggunaan ikon-ikon spesifik dan warna kotak pembeda. Selain itu, elemen ini diperkuat melalui konteks materi pembelajaran dan kuis yang disusun berdasarkan skenario nyata untuk mengajarkan pengguna cara mengidentifikasi risiko, menggunakan alat pemadam, dan melakukan evakuasi mandiri dengan benar. Sebagai bentuk tindakan nyata, aplikasi ini turut menghadirkan fitur Peta Interaktif dan Tombol SOS yang memberikan solusi praktis berbasis lokasi, sehingga pengetahuan yang didapat pengguna terhubung langsung dengan tindakan pencegahan serta respons darurat dalam menghadapi ancaman kebakaran di dunia nyata.
