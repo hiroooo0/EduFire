@@ -14,10 +14,58 @@
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <section class="materi-header-section">
-                <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--color-bg-sidebar);">Materi Pembelajaran</h1>
-                <p style="color: var(--color-text-muted); margin-top: 4px;">Tingkatkan kesiapsiagaan Anda dengan modul interaktif kami.</p>
+            <!-- Desktop Top Bar -->
+            <div th:replace="~{layout :: top-bar('materi')}"></div>
+            
+            <div class="main-container-inner">
+                <!-- Statistics Section on larger screens -->
+                <section class="stats-section-desktop">
+                    <div class="stats-grid">
+                        <div class="stats-card">
+                            <div class="stats-icon-wrapper stats-total">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                            </div>
+                            <div class="stats-info">
+                                <span class="stats-label">Total Materi</span>
+                                <span class="stats-number" th:text="${#lists.size(modules)}">6</span>
+                            </div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-icon-wrapper stats-completed">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <div class="stats-info">
+                                <span class="stats-label">Materi Selesai</span>
+                                <span class="stats-number" th:text="${modules.stream().filter(m -> m.progressPercentage == 100).count()}">1</span>
+                            </div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-icon-wrapper stats-in-progress">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <div class="stats-info">
+                                <span class="stats-label">Sedang Dipelajari</span>
+                                <span class="stats-number" th:text="${modules.stream().filter(m -> m.progressPercentage &gt; 0 &amp;&amp; m.progressPercentage &lt; 100).count()}">3</span>
+                            </div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-icon-wrapper stats-score">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z" /></svg>
+                            </div>
+                            <div class="stats-info">
+                                <span class="stats-label">Nilai Rata-rata Kuis</span>
+                                <span class="stats-number">85/100</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
                 
+                <!-- Hero section -->
+                <section class="hero-section">
+                    <h1 class="hero-title">Materi Pembelajaran</h1>
+                    <p class="hero-subtitle">Tingkatkan kesiapsiagaan Anda dengan modul interaktif kami.</p>
+                </section>
+
                 <!-- Search and Filter Bar -->
                 <form th:action="@{/materi}" method="get" class="materi-search-bar">
                     <div class="search-input-wrapper">
@@ -27,42 +75,103 @@
                         </svg>
                         <input type="text" name="search" th:value="${search}" placeholder="Cari materi..." class="search-input">
                     </div>
-                    <button type="submit" class="btn-primary" style="padding: 12px 20px; border-radius: var(--border-radius-md); box-shadow: none;">Cari</button>
-                    <button type="button" class="btn-filter" onclick="alert('Filter opsi akan ditambahkan untuk memisahkan level Pemula, Menengah, dan Mahir.')">
-                        <!-- Filter Icon -->
-                        <svg style="width:20px;height:20px" viewBox="0 0 24 24" fill="currentColor"><path d="M14,12V19.88C14.04,20.18 13.94,20.5 13.71,20.71C13.32,21.1 12.69,21.1 12.3,20.71L10.29,18.7C10.06,18.47 9.96,18.16 10,17.87V12H9.97L4.21,4.62C3.79,4.08 4.18,3.3 4.88,3.3H19.12C19.81,3.3 20.21,4.08 19.79,4.62L14.03,12H14Z" /></svg>
-                        Filter
+                    <button type="submit" class="card-continue-btn" style="width: auto; padding: 16px 28px; border-radius: var(--radius-full);">Cari</button>
+                    <button type="button" class="btn-filter" aria-label="Filter Modules" onclick="alert('Filter opsi akan menampilkan level Pemula, Menengah, dan Mahir.')">
+                        <!-- Filter Icon (Dark Blue) -->
+                        <svg viewBox="0 0 24 24"><path d="M14,12V19.88C14.04,20.18 13.94,20.5 13.71,20.71C13.32,21.1 12.69,21.1 12.3,20.71L10.29,18.7C10.06,18.47 9.96,18.16 10,17.87V12H9.97L4.21,4.62C3.79,4.08 4.18,3.3 4.88,3.3H19.12C19.81,3.3 20.21,4.08 19.79,4.62L14.03,12H14Z" /></svg>
                     </button>
                 </form>
-            </section>
 
-            <!-- Modules Grid -->
-            <div class="modules-grid" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));">
-                <!-- If no modules found -->
-                <div th:if="${#lists.isEmpty(modules)}" style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--color-text-muted);">
-                    <p style="font-size: 1.2rem; font-weight: 600;">Modul tidak ditemukan</p>
-                    <p style="font-size: 0.9rem; margin-top: 4px;">Coba gunakan kata kunci pencarian yang lain.</p>
-                    <a th:href="@{/materi}" class="btn-primary" style="display: inline-flex; margin-top: 16px;">Tampilkan Semua Materi</a>
+                <!-- Horizontal Category Chips -->
+                <section class="category-scroll-container">
+                    <ul class="category-chips-list">
+                        <li class="category-chip active" data-category="Semua">Semua</li>
+                        <li class="category-chip" data-category="Jalur Evakuasi">Jalur Evakuasi</li>
+                        <li class="category-chip" data-category="APAR">APAR</li>
+                        <li class="category-chip" data-category="P3K">P3K</li>
+                        <li class="category-chip" data-category="Kebakaran">Kebakaran</li>
+                        <li class="category-chip" data-category="Gempa">Gempa</li>
+                    </ul>
+                </section>
+
+                <!-- Continue Learning Section -->
+                <div th:with="continueModule=${modules.stream().filter(m -> m.progressPercentage &gt; 0 &amp;&amp; m.progressPercentage &lt; 100).findFirst().orElse(null)}">
+                    <section th:if="${continueModule != null}" class="continue-learning-section">
+                        <div class="continue-card">
+                            <div class="continue-content">
+                                <span class="continue-badge">Lanjutkan Belajar</span>
+                                <h2 class="continue-title" th:text="${continueModule.title}">Pengenalan Jalur Evakuasi</h2>
+                                <div class="continue-meta">
+                                    <span th:text="${continueModule.durationMinutes} + ' Menit Estimasi Baca'">10 Menit Estimasi Baca</span>
+                                    <span>&bull;</span>
+                                    <span th:text="${continueModule.progressPercentage} + '% Selesai'">85% Selesai</span>
+                                </div>
+                                <div class="continue-progress-bar">
+                                    <div class="continue-progress-fill" th:style="'width: ' + ${continueModule.progressPercentage} + '%'"></div>
+                                </div>
+                            </div>
+                            <button class="btn-continue-learning" th:onclick="'window.location.href=\'/materi/' + ${continueModule.id} + '\''">
+                                <span>Lanjutkan</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="continue-icon"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                            </button>
+                        </div>
+                    </section>
                 </div>
 
-                <!-- Loop modules -->
-                <div th:each="moduleItem : ${modules}" class="module-card" th:onclick="'window.location.href=\'/materi/' + ${moduleItem.id} + '\''">
-                    <span th:if="${moduleItem.isNew}" class="badge-new">Baru</span>
-                    <div class="module-icon-wrapper" th:classappend="${moduleItem.iconClass}">
-                        <div th:utext="${moduleItem.svgIcon}"></div>
+                <!-- Learning Modules Grid -->
+                <div class="modules-grid">
+                    <!-- If no modules found -->
+                    <div th:if="${#lists.isEmpty(modules)}" style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--color-text-muted);">
+                        <p style="font-size: 1.2rem; font-weight: 600;">Modul tidak ditemukan</p>
+                        <p style="font-size: 0.9rem; margin-top: 4px;">Coba gunakan kata kunci pencarian yang lain.</p>
+                        <a th:href="@{/materi}" class="btn-continue-learning" style="display: inline-flex; margin-top: 16px;">Tampilkan Semua Materi</a>
                     </div>
-                    <h3 class="module-title" th:text="${moduleItem.title}">Mengenal APAR</h3>
-                    <p class="module-desc" th:text="${moduleItem.description}">Pelajari jenis dan cara penggunaan alat pemadam api ringan dengan benar.</p>
-                    
-                    <div class="module-meta-info" th:text="'WAKTU: ' + ${moduleItem.durationMinutes} + ' MENIT'">WAKTU: 15 MENIT</div>
-                    
-                    <div class="module-progress-container">
-                        <div class="module-progress-header">
-                            <span>Progres</span>
-                            <span th:text="${moduleItem.progressPercentage} + '%'">40%</span>
+
+                    <!-- Loop modules -->
+                    <div th:each="moduleItem : ${modules}" 
+                         class="module-card" 
+                         th:data-category="${#strings.contains(moduleItem.title, 'APAR') ? 'APAR' : (#strings.contains(moduleItem.title, 'Jalur') || #strings.contains(moduleItem.title, 'Titik') ? 'Jalur Evakuasi' : (#strings.contains(moduleItem.title, 'P3K') ? 'P3K' : (#strings.contains(moduleItem.title, 'Gempa') ? 'Gempa' : 'Kebakaran')))}"
+                         th:onclick="'window.location.href=\'/materi/' + ${moduleItem.id} + '\''">
+                        
+                        <div class="card-header">
+                            <div class="card-icon-container" th:classappend="${moduleItem.iconClass}">
+                                <div th:utext="${moduleItem.svgIcon}"></div>
+                            </div>
+                            <div class="card-badges">
+                                <span th:if="${moduleItem.isNew}" class="badge-new-orange">Baru</span>
+                                <span class="badge-difficulty" th:classappend="${#strings.contains(moduleItem.title, 'APAR') || #strings.contains(moduleItem.title, 'P3K') || #strings.contains(moduleItem.title, 'Risiko') ? 'difficulty-menengah' : (#strings.contains(moduleItem.title, 'Alarm') ? 'difficulty-mahir' : 'difficulty-pemula')}"
+                                      th:text="${#strings.contains(moduleItem.title, 'APAR') || #strings.contains(moduleItem.title, 'P3K') || #strings.contains(moduleItem.title, 'Risiko') ? 'Menengah' : (#strings.contains(moduleItem.title, 'Alarm') ? 'Mahir' : 'Pemula')}">Pemula</span>
+                            </div>
+                            <button class="bookmark-btn" aria-label="Bookmark module" onclick="event.stopPropagation(); toggleBookmark(this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="bookmark-icon-svg"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                            </button>
                         </div>
-                        <div class="module-progress-bar">
-                            <div class="module-progress-bar-fill" th:style="'width: ' + ${moduleItem.progressPercentage} + '%'"></div>
+                        
+                        <div class="card-body">
+                            <h3 class="card-title" th:text="${moduleItem.title}">Judul Modul</h3>
+                            <p class="card-description" th:text="${moduleItem.description}">Deskripsi singkat modul keselamatan.</p>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <div class="card-meta">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="meta-icon">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span th:text="${moduleItem.durationMinutes} + ' Menit'">10 Menit</span>
+                            </div>
+                            <div class="card-progress">
+                                <div class="progress-info">
+                                    <span class="progress-label">Progres</span>
+                                    <span class="progress-text" th:text="${moduleItem.progressPercentage} + '%'">0%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-orange" th:style="'width: ' + ${moduleItem.progressPercentage} + '%'"></div>
+                                </div>
+                            </div>
+                            <button class="card-continue-btn">
+                                <span>Mulai Belajar</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-arrow"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -75,6 +184,31 @@
         <!-- Mobile Bottom Nav -->
         <div th:replace="~{layout :: mobile-bottom-nav('materi')}"></div>
     </div>
+
+    <!-- Category Chips Client Filtering Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const chips = document.querySelectorAll('.category-chip');
+            const cards = document.querySelectorAll('.module-card');
+            
+            chips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    chips.forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    
+                    const selectedCategory = chip.getAttribute('data-category');
+                    cards.forEach(card => {
+                        const cardCategory = card.getAttribute('data-category');
+                        if (selectedCategory === 'Semua' || cardCategory === selectedCategory) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>

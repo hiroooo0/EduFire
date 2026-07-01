@@ -31,20 +31,25 @@
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--color-bg-sidebar); margin-bottom: 4px;">Peta Hidran & Jalur Evakuasi</h1>
-            <p style="color: var(--color-text-muted); margin-bottom: 24px;">Temukan letak hidran kebakaran dan rute evakuasi terdekat di sekitar Anda.</p>
+            <!-- Desktop Top Bar -->
+            <div th:replace="~{layout :: top-bar('peta')}"></div>
             
-            <div class="peta-container">
-                <!-- Search bar overlay -->
-                <div class="peta-search-box">
-                    <svg class="peta-search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    <input type="text" id="mapSearchInput" class="peta-search-input" placeholder="Cari Hidran Terdekat... (contoh: Gajah Mada, Istiqlal, Sunter)" oninput="searchHydrants(this.value)">
-                </div>
+            <div class="main-container-inner">
+                <h1 style="font-size: 2.2rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 4px;">Peta Hidran & Jalur Evakuasi</h1>
+                <p style="color: var(--color-text-muted); margin-bottom: 24px;">Temukan letak hidran kebakaran dan rute evakuasi terdekat di sekitar Anda.</p>
+                
+                <div class="peta-container">
+                    <!-- Search bar overlay -->
+                    <div class="peta-search-box">
+                        <svg class="peta-search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" id="mapSearchInput" class="peta-search-input" placeholder="Cari Hidran Terdekat... (contoh: Gajah Mada, Istiqlal, Sunter)" oninput="searchHydrants(this.value)">
+                    </div>
 
-                <!-- Leaflet container -->
-                <div id="map"></div>
+                    <!-- Leaflet container -->
+                    <div id="map"></div>
+                </div>
             </div>
         </main>
 

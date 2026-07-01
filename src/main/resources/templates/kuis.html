@@ -14,7 +14,11 @@
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <div class="quiz-container">
+            <!-- Desktop Top Bar -->
+            <div th:replace="~{layout :: top-bar('kuis')}"></div>
+            
+            <div class="main-container-inner">
+                <div class="quiz-container">
                 
                 <!-- Loading State -->
                 <div id="quizLoading" class="quiz-card" style="text-align: center; padding: 60px;">
@@ -101,6 +105,7 @@
                     </div>
                 </div>
 
+            </div>
             </div>
         </main>
 

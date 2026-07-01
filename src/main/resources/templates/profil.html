@@ -14,10 +14,13 @@
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <div class="profile-card">
-                
-                <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--color-bg-sidebar); margin-bottom: 8px;">Edit Profil</h1>
-                <p style="color: var(--color-text-muted); margin-bottom: 32px;">Perbarui detail informasi akun Anda di bawah ini.</p>
+            <!-- Desktop Top Bar -->
+            <div th:replace="~{layout :: top-bar('profil')}"></div>
+            
+            <div class="main-container-inner">
+                <div class="profile-card">
+                    <h1 style="font-size: 2.2rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 8px;">Edit Profil</h1>
+                    <p style="color: var(--color-text-muted); margin-bottom: 32px;">Perbarui detail informasi akun Anda di bawah ini.</p>
 
                 <!-- Success Alert -->
                 <div th:if="${param.success}" class="alert-success">
@@ -71,6 +74,7 @@
                         <button type="submit" class="btn-save-profile" onclick="return validatePasswordForm()">SIMPAN</button>
                     </div>
                 </form>
+            </div>
             </div>
         </main>
 

@@ -124,7 +124,7 @@ public class DataLoader implements CommandLineRunner {
                     "4. **Tutup luka:** Tutup luka bakar secara longgar dengan perban steril atau kain bersih basah.\n" +
                     "5. **Hindari bahan rumahan:** Jangan pernah mengoleskan mentega, pasta gigi, kecap, atau es batu ke atas luka bakar.",
                     12,
-                    12,
+                    0,
                     false,
                     "materi-icon-p3k",
                     "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"2\" y=\"6\" width=\"20\" height=\"14\" rx=\"2\" ry=\"2\"/><path d=\"M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\"/><path d=\"M12 10v6\"/><path d=\"M9 13h6\"/></svg>"
