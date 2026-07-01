@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{layout :: header-assets}"></div>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Desktop Sidebar -->
+        <div th:replace="~{layout :: sidebar('materi')}"></div>
+
+        <!-- Mobile Header -->
+        <div th:replace="~{layout :: mobile-header}"></div>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="materi-detail-card">
+                <a th:href="@{/materi}" class="materi-detail-back">
+                    <!-- Left Arrow SVG -->
+                    <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                    Kembali ke Daftar Materi
+                </a>
+                
+                <h1 class="materi-detail-title" th:text="${module.title}">Pengenalan Jalur Evakuasi</h1>
+                
+                <div class="materi-detail-meta">
+                    <span th:text="'Estimasi waktu baca: ' + ${module.durationMinutes} + ' menit'">10 menit</span>
+                    <span>&bull;</span>
+                    <span th:text="'Status Progres: ' + ${module.progressPercentage} + '%'">Progress: 100%</span>
+                </div>
+                
+                <!-- Rich text content formatted with paragraph tags -->
+                <div class="materi-detail-content">
+                    <p th:each="para : ${#strings.arraySplit(module.content, '\n\n')}" th:utext="${para}"></p>
+                </div>
+                
+                <div style="margin-top: 40px; border-top: 1px solid var(--color-border); padding-top: 24px; text-align: center;">
+                    <p style="font-size: 0.95rem; font-weight: 600; color: var(--color-success); margin-bottom: 16px;">🎉 Selamat! Anda telah menyelesaikan modul ini dan mendapatkan +20 Poin!</p>
+                    <a th:href="@{/kuis}" class="btn-primary" style="display: inline-flex;">Uji Pemahaman Anda dengan Kuis</a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Floating SOS Button & Modal -->
+        <div th:replace="~{layout :: sos-elements}"></div>
+
+        <!-- Mobile Bottom Nav -->
+        <div th:replace="~{layout :: mobile-bottom-nav('materi')}"></div>
+    </div>
+
+</body>
+</html>

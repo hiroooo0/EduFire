@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{layout :: header-assets}"></div>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Desktop Sidebar -->
+        <div th:replace="~{layout :: sidebar('kuis')}"></div>
+
+        <!-- Mobile Header -->
+        <div th:replace="~{layout :: mobile-header}"></div>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="quiz-container">
+                
+                <!-- Loading State -->
+                <div id="quizLoading" class="quiz-card" style="text-align: center; padding: 60px;">
+                    <p style="font-size: 1.2rem; font-weight: 600; color: var(--color-text-muted);">Memuat Kuis Keselamatan...</p>
+                </div>
+
+                <!-- Active Quiz Card -->
+                <div id="quizActive" class="quiz-card" style="display: none;">
+                    <div class="quiz-top-bar">
+                        <span class="quiz-badge">Modul 1: Evakuasi</span>
+                        <div class="quiz-timer">
+                            <!-- Clock Icon SVG -->
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span id="timerText">03:00</span>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="quiz-progress-bar">
+                        <div id="progressBarFill" class="quiz-progress-bar-fill"></div>
+                    </div>
+
+                    <!-- Question Block -->
+                    <div class="quiz-question-number" id="questionNumText">Pertanyaan 1 dari 10</div>
+                    <div class="quiz-question-text" id="questionText">Apa yang harus dilakukan jika terjebak di ruangan penuh asap?</div>
+
+                    <!-- Options List -->
+                    <div class="quiz-options-list">
+                        <div class="quiz-option" id="optA" onclick="selectOption('A')">
+                            <span class="quiz-option-letter">A</span>
+                            <span class="option-text" id="optAText">Opsi A</span>
+                        </div>
+                        <div class="quiz-option" id="optB" onclick="selectOption('B')">
+                            <span class="quiz-option-letter">B</span>
+                            <span class="option-text" id="optBText">Opsi B</span>
+                        </div>
+                        <div class="quiz-option" id="optC" onclick="selectOption('C')">
+                            <span class="quiz-option-letter">C</span>
+                            <span class="option-text" id="optCText">Opsi C</span>
+                        </div>
+                        <div class="quiz-option" id="optD" onclick="selectOption('D')">
+                            <span class="quiz-option-letter">D</span>
+                            <span class="option-text" id="optDText">Opsi D</span>
+                        </div>
+                    </div>
+
+                    <!-- Explanation Alert (Initially Hidden) -->
+                    <div id="explanationBox" style="display: none; background-color: #f8fafc; border-left: 4px solid var(--color-secondary); padding: 16px; border-radius: var(--border-radius-sm); margin-bottom: 24px; font-size: 0.9rem; line-height: 1.5;">
+                        <strong>Penjelasan:</strong> <span id="explanationText">Ini adalah penjelasannya.</span>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="quiz-nav-buttons">
+                        <button id="btnPrev" class="btn-quiz-prev" onclick="navigateQuestion(-1)">Sebelumnya</button>
+                        <button id="btnNext" class="btn-quiz-next" onclick="navigateQuestion(1)">
+                            <span>Selanjutnya</span>
+                            <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Finished Quiz Card -->
+                <div id="quizFinished" class="quiz-card quiz-finished-panel" style="display: none;">
+                    <div class="quiz-finished-icon">🏆</div>
+                    <h2 class="sos-title">Kuis Selesai!</h2>
+                    <p class="sos-desc">Terima kasih telah berpartisipasi. Pemahaman Anda akan membantu menyelamatkan nyawa.</p>
+                    
+                    <div class="quiz-score-circle">
+                        <span class="quiz-score-num" id="finalScore">80</span>
+                        <span class="quiz-score-label">Skor</span>
+                    </div>
+
+                    <div style="background-color:#f1f5f9; padding:16px; border-radius:var(--border-radius-md); margin-bottom: 32px; font-size:0.95rem;">
+                        <p style="font-weight:600; color:var(--color-bg-sidebar);">Hasil Anda:</p>
+                        <p style="margin-top:6px;">Benar: <span id="correctCount" style="color:var(--color-success); font-weight:700;">8</span> / <span id="totalQuestions">10</span> Soal</p>
+                        <p>Poin Diperoleh: <span id="pointsEarned" style="color:var(--color-secondary); font-weight:700;">+80 Poin</span></p>
+                    </div>
+
+                    <div style="display: flex; gap: 16px; justify-content: center;">
+                        <button class="btn-primary" onclick="restartQuiz()">Ulangi Kuis</button>
+                        <a th:href="@{/dashboard}" class="btn-secondary" style="color:var(--color-bg-sidebar); border-color:var(--color-border);">Kembali ke Dashboard</a>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Floating SOS Button & Modal -->
+        <div th:replace="~{layout :: sos-elements}"></div>
+
+        <!-- Mobile Bottom Nav -->
+        <div th:replace="~{layout :: mobile-bottom-nav('kuis')}"></div>
+    </div>
+
+    <!-- Quiz Engine Script -->
+    <script th:inline="javascript">
+        let questions = [];
+        let currentIndex = 0;
+        let selectedAnswers = {}; // map of {questionIndex: selectedOption}
+        let questionStatuses = {}; // map of {questionIndex: {answered: true, correct: boolean}}
+        let timeLeft = 180; // 3 minutes in seconds
+        let timerInterval = null;
+        let isQuizFinished = false;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            loadQuizQuestions();
+        });
+
+        function loadQuizQuestions() {
+            fetch('/api/quiz/questions')
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        questions = data;
+                        document.getElementById('quizLoading').style.display = 'none';
+                        document.getElementById('quizActive').style.display = 'block';
+                        renderQuestion();
+                        startTimer();
+                    } else {
+                        document.getElementById('quizLoading').innerHTML = "<p style='color:var(--color-primary); font-weight:700;'>Tidak ada pertanyaan kuis saat ini.</p>";
+                    }
+                })
+                .catch(err => {
+                    console.error("Error loading questions", err);
+                    document.getElementById('quizLoading').innerHTML = "<p style='color:var(--color-primary); font-weight:700;'>Gagal memuat kuis. Silakan coba lagi.</p>";
+                });
+        }
+
+        function startTimer() {
+            timeLeft = 180;
+            updateTimerText();
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    finishQuiz();
+                } else {
+                    timeLeft--;
+                    updateTimerText();
+                }
+            }, 1000);
+        }
+
+        function updateTimerText() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timerText').innerText = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function renderQuestion() {
+            if (questions.length === 0) return;
+            const q = questions[currentIndex];
+            
+            // Set question number text
+            document.getElementById('questionNumText').innerText = `Pertanyaan ${currentIndex + 1} dari ${questions.length}`;
+            
+            // Progress Bar
+            const progressPercent = ((currentIndex + 1) / questions.length) * 100;
+            document.getElementById('progressBarFill').style.width = `${progressPercent}%`;
+
+            // Question text
+            document.getElementById('questionText').innerText = q.questionText;
+
+            // Option texts
+            document.getElementById('optAText').innerText = q.optionA;
+            document.getElementById('optBText').innerText = q.optionB;
+            document.getElementById('optCText').innerText = q.optionC;
+            document.getElementById('optDText').innerText = q.optionD;
+
+            // Clear all option styles
+            const options = ['A', 'B', 'C', 'D'];
+            options.forEach(opt => {
+                const el = document.getElementById(`opt${opt}`);
+                el.className = 'quiz-option';
+            });
+
+            // Check if already answered
+            const selectedOpt = selectedAnswers[currentIndex];
+            const hasAnswered = questionStatuses[currentIndex] && questionStatuses[currentIndex].answered;
+            
+            if (hasAnswered) {
+                const correctOpt = q.correctAnswer;
+                options.forEach(opt => {
+                    const el = document.getElementById(`opt${opt}`);
+                    if (opt === correctOpt) {
+                        el.classList.add('correct');
+                    } else if (opt === selectedOpt) {
+                        el.classList.add('incorrect');
+                    }
+                });
+                
+                // Show explanation
+                document.getElementById('explanationText').innerText = q.explanation;
+                document.getElementById('explanationBox').style.display = 'block';
+            } else {
+                // Not yet answered: restore selection style if any
+                if (selectedOpt) {
+                    document.getElementById(`opt${selectedOpt}`).classList.add('selected');
+                }
+                document.getElementById('explanationBox').style.display = 'none';
+            }
+
+            // Navigation buttons states
+            document.getElementById('btnPrev').disabled = (currentIndex === 0);
+            
+            const btnNext = document.getElementById('btnNext');
+            if (currentIndex === questions.length - 1) {
+                btnNext.querySelector('span').innerText = 'Selesai';
+            } else {
+                btnNext.querySelector('span').innerText = 'Selanjutnya';
+            }
+        }
+
+        function selectOption(option) {
+            // If already submitted / answered, block changing
+            if (questionStatuses[currentIndex] && questionStatuses[currentIndex].answered) return;
+
+            // Save answer selection
+            selectedAnswers[currentIndex] = option;
+
+            // Highlight selected
+            const options = ['A', 'B', 'C', 'D'];
+            options.forEach(opt => {
+                const el = document.getElementById(`opt${opt}`);
+                el.className = 'quiz-option';
+                if (opt === option) el.classList.add('selected');
+            });
+
+            // Instant feedback logic:
+            const correctOpt = questions[currentIndex].correctAnswer;
+            const isCorrect = (option === correctOpt);
+
+            // Save status
+            questionStatuses[currentIndex] = {
+                answered: true,
+                correct: isCorrect
+            };
+
+            // Re-render immediately to show correct/incorrect classes
+            setTimeout(() => {
+                renderQuestion();
+            }, 300); // 300ms delay for smooth click feedback
+        }
+
+        function navigateQuestion(direction) {
+            const nextIndex = currentIndex + direction;
+            if (nextIndex >= 0 && nextIndex < questions.length) {
+                currentIndex = nextIndex;
+                renderQuestion();
+            } else if (nextIndex === questions.length) {
+                // Finished quiz submit
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            if (isQuizFinished) return;
+            isQuizFinished = true;
+            clearInterval(timerInterval);
+
+            // Calculate score
+            let correct = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (questionStatuses[i] && questionStatuses[i].correct) {
+                    correct++;
+                }
+            }
+
+            const score = Math.round((correct / questions.length) * 100);
+            const pointsEarned = correct * 10; // 10 points per correct answer
+
+            // Update finished panel UI
+            document.getElementById('finalScore').innerText = score;
+            document.getElementById('correctCount').innerText = correct;
+            document.getElementById('totalQuestions').innerText = questions.length;
+            document.getElementById('pointsEarned').innerText = `+${pointsEarned} Poin`;
+
+            // POST score to backend
+            const formData = new FormData();
+            formData.append("score", score);
+            formData.append("pointsEarned", pointsEarned);
+
+            fetch('/api/quiz/submit-score', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(resData => {
+                console.log("Score saved successfully", resData);
+            })
+            .catch(err => {
+                console.error("Failed to save score", err);
+            });
+
+            // Show finished panel
+            document.getElementById('quizActive').style.display = 'none';
+            document.getElementById('quizFinished').style.display = 'block';
+        }
+
+        function restartQuiz() {
+            currentIndex = 0;
+            selectedAnswers = {};
+            questionStatuses = {};
+            isQuizFinished = false;
+            document.getElementById('quizFinished').style.display = 'none';
+            document.getElementById('quizActive').style.display = 'block';
+            renderQuestion();
+            startTimer();
+        }
+    </script>
+</body>
+</html>
