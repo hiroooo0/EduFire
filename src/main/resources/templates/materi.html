@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{layout :: header-assets}"></div>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Desktop Sidebar -->
+        <div th:replace="~{layout :: sidebar('materi')}"></div>
+
+        <!-- Mobile Header -->
+        <div th:replace="~{layout :: mobile-header}"></div>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <section class="materi-header-section">
+                <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--color-bg-sidebar);">Materi Pembelajaran</h1>
+                <p style="color: var(--color-text-muted); margin-top: 4px;">Tingkatkan kesiapsiagaan Anda dengan modul interaktif kami.</p>
+                
+                <!-- Search and Filter Bar -->
+                <form th:action="@{/materi}" method="get" class="materi-search-bar">
+                    <div class="search-input-wrapper">
+                        <!-- Search Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" name="search" th:value="${search}" placeholder="Cari materi..." class="search-input">
+                    </div>
+                    <button type="submit" class="btn-primary" style="padding: 12px 20px; border-radius: var(--border-radius-md); box-shadow: none;">Cari</button>
+                    <button type="button" class="btn-filter" onclick="alert('Filter opsi akan ditambahkan untuk memisahkan level Pemula, Menengah, dan Mahir.')">
+                        <!-- Filter Icon -->
+                        <svg style="width:20px;height:20px" viewBox="0 0 24 24" fill="currentColor"><path d="M14,12V19.88C14.04,20.18 13.94,20.5 13.71,20.71C13.32,21.1 12.69,21.1 12.3,20.71L10.29,18.7C10.06,18.47 9.96,18.16 10,17.87V12H9.97L4.21,4.62C3.79,4.08 4.18,3.3 4.88,3.3H19.12C19.81,3.3 20.21,4.08 19.79,4.62L14.03,12H14Z" /></svg>
+                        Filter
+                    </button>
+                </form>
+            </section>
+
+            <!-- Modules Grid -->
+            <div class="modules-grid" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));">
+                <!-- If no modules found -->
+                <div th:if="${#lists.isEmpty(modules)}" style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--color-text-muted);">
+                    <p style="font-size: 1.2rem; font-weight: 600;">Modul tidak ditemukan</p>
+                    <p style="font-size: 0.9rem; margin-top: 4px;">Coba gunakan kata kunci pencarian yang lain.</p>
+                    <a th:href="@{/materi}" class="btn-primary" style="display: inline-flex; margin-top: 16px;">Tampilkan Semua Materi</a>
+                </div>
+
+                <!-- Loop modules -->
+                <div th:each="moduleItem : ${modules}" class="module-card" th:onclick="'window.location.href=\'/materi/' + ${moduleItem.id} + '\''">
+                    <span th:if="${moduleItem.isNew}" class="badge-new">Baru</span>
+                    <div class="module-icon-wrapper" th:classappend="${moduleItem.iconClass}">
+                        <div th:utext="${moduleItem.svgIcon}"></div>
+                    </div>
+                    <h3 class="module-title" th:text="${moduleItem.title}">Mengenal APAR</h3>
+                    <p class="module-desc" th:text="${moduleItem.description}">Pelajari jenis dan cara penggunaan alat pemadam api ringan dengan benar.</p>
+                    
+                    <div class="module-meta-info" th:text="'WAKTU: ' + ${moduleItem.durationMinutes} + ' MENIT'">WAKTU: 15 MENIT</div>
+                    
+                    <div class="module-progress-container">
+                        <div class="module-progress-header">
+                            <span>Progres</span>
+                            <span th:text="${moduleItem.progressPercentage} + '%'">40%</span>
+                        </div>
+                        <div class="module-progress-bar">
+                            <div class="module-progress-bar-fill" th:style="'width: ' + ${moduleItem.progressPercentage} + '%'"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Floating SOS Button & Modal -->
+        <div th:replace="~{layout :: sos-elements}"></div>
+
+        <!-- Mobile Bottom Nav -->
+        <div th:replace="~{layout :: mobile-bottom-nav('materi')}"></div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{layout :: header-assets}"></div>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Desktop Sidebar -->
+        <div th:replace="~{layout :: sidebar('profil')}"></div>
+
+        <!-- Mobile Header -->
+        <div th:replace="~{layout :: mobile-header}"></div>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="profile-card">
+                
+                <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--color-bg-sidebar); margin-bottom: 8px;">Edit Profil</h1>
+                <p style="color: var(--color-text-muted); margin-bottom: 32px;">Perbarui detail informasi akun Anda di bawah ini.</p>
+
+                <!-- Success Alert -->
+                <div th:if="${param.success}" class="alert-success">
+                    🎉 Profil Anda berhasil disimpan dan diperbarui!
+                </div>
+
+                <form th:action="@{/profil/update}" method="post" class="profile-layout" th:object="${user}">
+                    <!-- Left Photo Column -->
+                    <div class="profile-photo-column">
+                        <img class="profile-photo-large" th:src="@{/source/image.png}" alt="Foto Profil">
+                        <button type="button" class="btn-upload" onclick="alert('Fitur unggah foto akan terhubung ke penyimpanan lokal server.')">Ganti Foto</button>
+                    </div>
+
+                    <!-- Right Form Column -->
+                    <div class="profile-form-grid">
+                        <div class="form-group">
+                            <label for="name">Nama Profile</label>
+                            <input type="text" id="name" name="name" th:value="${user != null ? user.name : 'Budi'}" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" th:value="${user != null ? user.username : 'Budi13311'}" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="birthDate">Tanggal Lahir</label>
+                            <input type="date" id="birthDate" name="birthDate" th:value="${user != null ? user.birthDate : '2006-01-16'}" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" th:value="${user != null ? user.email : 'budigaming01@gmail.com'}" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">No Telp</label>
+                            <input type="text" id="phone" name="phone" th:value="${user != null ? user.phone : '081234563271'}" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Ganti Password</label>
+                            <input type="password" id="password" name="password" placeholder="Ketik password baru jika ingin mengubah" class="form-control">
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="confirmPassword">Konfirmasi Password</label>
+                            <input type="password" id="confirmPassword" placeholder="Ketik ulang password baru" class="form-control">
+                        </div>
+
+                        <button type="submit" class="btn-save-profile" onclick="return validatePasswordForm()">SIMPAN</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <!-- Floating SOS Button & Modal -->
+        <div th:replace="~{layout :: sos-elements}"></div>
+
+        <!-- Mobile Bottom Nav -->
+        <div th:replace="~{layout :: mobile-bottom-nav('profil')}"></div>
+    </div>
+
+    <script>
+        function validatePasswordForm() {
+            const pwd = document.getElementById('password').value;
+            const confirmPwd = document.getElementById('confirmPassword').value;
+
+            if (pwd.trim() !== '') {
+                if (pwd !== confirmPwd) {
+                    alert('⚠️ Password baru dan Konfirmasi Password tidak cocok!');
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

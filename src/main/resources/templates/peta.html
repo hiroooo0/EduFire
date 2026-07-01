@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{layout :: header-assets}"></div>
+    <!-- Leaflet Map CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <style>
+        /* Small styling overrides to make Leaflet fit perfectly */
+        .leaflet-bar a {
+            background-color: var(--color-bg-card) !important;
+            color: var(--color-text-main) !important;
+            border-color: var(--color-border) !important;
+        }
+        
+        .leaflet-popup-content-wrapper {
+            box-shadow: var(--box-shadow-hover) !important;
+            border: 1px solid var(--color-border);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Desktop Sidebar -->
+        <div th:replace="~{layout :: sidebar('peta')}"></div>
+
+        <!-- Mobile Header -->
+        <div th:replace="~{layout :: mobile-header}"></div>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--color-bg-sidebar); margin-bottom: 4px;">Peta Hidran & Jalur Evakuasi</h1>
+            <p style="color: var(--color-text-muted); margin-bottom: 24px;">Temukan letak hidran kebakaran dan rute evakuasi terdekat di sekitar Anda.</p>
+            
+            <div class="peta-container">
+                <!-- Search bar overlay -->
+                <div class="peta-search-box">
+                    <svg class="peta-search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input type="text" id="mapSearchInput" class="peta-search-input" placeholder="Cari Hidran Terdekat... (contoh: Gajah Mada, Istiqlal, Sunter)" oninput="searchHydrants(this.value)">
+                </div>
+
+                <!-- Leaflet container -->
+                <div id="map"></div>
+            </div>
+        </main>
+
+        <!-- Floating SOS Button & Modal -->
+        <div th:replace="~{layout :: sos-elements}"></div>
+
+        <!-- Mobile Bottom Nav -->
+        <div th:replace="~{layout :: mobile-bottom-nav('peta')}"></div>
+    </div>
+
+    <!-- Map Script -->
+    <script>
+        let map;
+        let markers = [];
+        let hydrantData = [];
+
+        document.addEventListener("DOMContentLoaded", function() {
+            initMap();
+            loadHydrantsFromServer();
+        });
+
+        function initMap() {
+            // Center the map around Central Jakarta (-6.1751, 106.8271)
+            map = L.map('map', {
+                zoomControl: false // Hide default zoom buttons, we can add custom ones or use standard topright
+            }).setView([-6.1550, 106.8300], 13);
+
+            // Add custom zoom control to top-right
+            L.control.zoom({
+                position: 'topright'
+            }).addTo(map);
+
+            // OpenStreetMap tile layer (smooth light carto styles)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(map);
+        }
+
+        function loadHydrantsFromServer() {
+            fetch('/api/hydrants')
+                .then(response => response.json())
+                .then(data => {
+                    hydrantData = data;
+                    renderMarkers();
+                })
+                .catch(err => {
+                    console.error("Error loading hydrants:", err);
+                    // Fallback local data if server fails
+                    hydrantData = [
+                        {id: 1, code: "HID-061", name: "Hidran Gajah Mada 1", latitude: -6.1550, longitude: 106.8140, status: "Aktif"},
+                        {id: 2, code: "HID-001", name: "Hidran Istiqlal", latitude: -6.1685, longitude: 106.8315, status: "Aktif"}
+                    ];
+                    renderMarkers();
+                });
+        }
+
+        function renderMarkers() {
+            // Clear existing markers
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            hydrantData.forEach(h => {
+                // Create custom circular marker or Pin
+                const markerColor = h.status === 'Aktif' ? 'var(--color-secondary)' : 'var(--color-primary)';
+                const marker = L.circleMarker([h.latitude, h.longitude], {
+                    radius: 10,
+                    fillColor: markerColor,
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).addTo(map);
+
+                // Create popup HTML content
+                const popupContent = `
+                    <div class="custom-popup">
+                        <div class="popup-title">${h.code}</div>
+                        <div class="popup-desc">${h.name}</div>
+                        <span class="popup-badge ${h.status === 'Aktif' ? 'active' : 'inactive'}">${h.status}</span>
+                    </div>
+                `;
+
+                marker.bindPopup(popupContent);
+                marker.hydrantName = h.name.toLowerCase();
+                marker.hydrantCode = h.code.toLowerCase();
+                markers.push(marker);
+            });
+        }
+
+        function searchHydrants(query) {
+            if (!query || query.trim() === '') return;
+            const searchStr = query.toLowerCase();
+
+            // Find matching hydrant in local dataset
+            const match = hydrantData.find(h => 
+                h.name.toLowerCase().includes(searchStr) || 
+                h.code.toLowerCase().includes(searchStr)
+            );
+
+            if (match) {
+                // Pan/zoom map to that location
+                map.flyTo([match.latitude, match.longitude], 15, {
+                    animate: true,
+                    duration: 1.5
+                });
+
+                // Find corresponding marker and open popup
+                const matchedMarker = markers.find(m => 
+                    m.hydrantName.includes(searchStr) || 
+                    m.hydrantCode.includes(searchStr)
+                );
+                
+                if (matchedMarker) {
+                    setTimeout(() => {
+                        matchedMarker.openPopup();
+                    }, 1600); // open after flight ends
+                }
+            }
+        }
+    </script>
+</body>
+</html>
