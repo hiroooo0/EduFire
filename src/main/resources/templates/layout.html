@@ -25,10 +25,10 @@
 
     <!-- Fragment: Desktop Sidebar -->
     <aside th:fragment="sidebar(currentPage)" class="sidebar">
-        <div class="logo-container" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding-bottom: 24px;">
-            <div class="logo-icon" style="font-size: 1.5rem; color: #f97316;">🔥</div>
+        <div class="logo-container" style="display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 0 16px 24px 16px;">
+            <img th:src="@{/source/logo_edufire.png}" alt="Logo EduFire" class="logo-img" style="height: 40px; width: 40px; object-fit: contain;">
             <div>
-                <span class="logo-text" style="font-size: 1.5rem; font-weight: 800; color: #1a202c;">EduFire</span>
+                <span class="logo-text" style="font-size: 1.5rem; font-weight: 800; color: var(--color-text-main);">EduFire</span>
             </div>
         </div>
         
@@ -79,7 +79,17 @@
     <header th:fragment="top-bar(currentPage)" class="desktop-top-bar" style="background: transparent; border: none;">
         <div class="top-bar-search" style="visibility: hidden;">
         </div>
-        <div class="top-bar-actions">
+        <div class="top-bar-actions" style="display: flex; align-items: center; gap: 16px;">
+            <!-- Dark Mode Toggle Button (Desktop Top Bar) -->
+            <button onclick="toggleDarkMode()" class="theme-toggle-btn" aria-label="Toggle dark mode" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 50%; color: var(--color-text-main); display: flex; align-items: center; justify-content: center; background-color: var(--color-bg-card); box-shadow: var(--shadow-sm); transition: all 0.2s;">
+                <svg class="sun-icon" style="width: 20px; height: 20px; display: none;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 9h-1m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 7a5 5 0 100 10 5 5 0 000-10z" />
+                </svg>
+                <svg class="moon-icon" style="width: 20px; height: 20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+            
             <!-- Profile Info Links to Edit Profile -->
             <div class="top-profile-info" onclick="window.location.href='/profil'">
                 <img class="top-profile-avatar" th:src="@{/source/image.png}" alt="Avatar Budi" style="width: 50px; height: 50px; border: none; object-fit: cover;">
@@ -88,14 +98,25 @@
     </header>
 
     <!-- Fragment: Mobile Header -->
-    <header th:fragment="mobile-header" class="mobile-header">
-        <a th:href="@{/dashboard}" class="mobile-logo">
-            <div class="mobile-logo-icon">🔥</div>
+    <header th:fragment="mobile-header" class="mobile-header" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px;">
+        <a th:href="@{/dashboard}" class="mobile-logo" style="display: flex; align-items: center; gap: 8px;">
+            <img th:src="@{/source/logo_edufire.png}" alt="Logo EduFire" class="mobile-logo-img" style="height: 32px; width: 32px; object-fit: contain;">
             <span class="mobile-logo-text">EduFire</span>
         </a>
-        <a th:href="@{/profil}">
-            <img class="mobile-avatar" th:src="@{/source/image.png}" alt="Avatar Budi">
-        </a>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <!-- Dark Mode Toggle Button (Mobile Header) -->
+            <button onclick="toggleDarkMode()" class="theme-toggle-btn" aria-label="Toggle dark mode" style="background: none; border: none; cursor: pointer; padding: 6px; color: var(--color-text-main); display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                <svg class="sun-icon" style="width: 20px; height: 20px; display: none;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 9h-1m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 7a5 5 0 100 10 5 5 0 000-10z" />
+                </svg>
+                <svg class="moon-icon" style="width: 20px; height: 20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+            <a th:href="@{/profil}">
+                <img class="mobile-avatar" th:src="@{/source/image.png}" alt="Avatar Budi">
+            </a>
+        </div>
     </header>
 
     <!-- Fragment: Mobile Bottom Navigation -->
@@ -190,11 +211,11 @@
                 const sunIcons = document.querySelectorAll('.sun-icon');
                 const moonIcons = document.querySelectorAll('.moon-icon');
                 if (isDark) {
-                    sunIcons.forEach(i => i.style.display = 'none');
-                    moonIcons.forEach(i => i.style.display = 'block');
-                } else {
                     sunIcons.forEach(i => i.style.display = 'block');
                     moonIcons.forEach(i => i.style.display = 'none');
+                } else {
+                    sunIcons.forEach(i => i.style.display = 'none');
+                    moonIcons.forEach(i => i.style.display = 'block');
                 }
             }
 
@@ -212,12 +233,12 @@
                 const moonIcons = document.querySelectorAll('.moon-icon');
                 if (isDark) {
                     document.body.classList.add('dark');
-                    sunIcons.forEach(i => i.style.display = 'none');
-                    moonIcons.forEach(i => i.style.display = 'block');
-                } else {
-                    document.body.classList.remove('dark');
                     sunIcons.forEach(i => i.style.display = 'block');
                     moonIcons.forEach(i => i.style.display = 'none');
+                } else {
+                    document.body.classList.remove('dark');
+                    sunIcons.forEach(i => i.style.display = 'none');
+                    moonIcons.forEach(i => i.style.display = 'block');
                 }
 
                 // Close notification dropdown when clicking outside

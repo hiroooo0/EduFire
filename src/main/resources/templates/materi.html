@@ -36,7 +36,7 @@
                             </div>
                             <div class="stats-info">
                                 <span class="stats-label">Materi Selesai</span>
-                                <span class="stats-number" th:text="${modules.stream().filter(m -> m.progressPercentage == 100).count()}">1</span>
+                                <span class="stats-number" th:text="${completedCount}">1</span>
                             </div>
                         </div>
                         <div class="stats-card">
@@ -45,7 +45,7 @@
                             </div>
                             <div class="stats-info">
                                 <span class="stats-label">Sedang Dipelajari</span>
-                                <span class="stats-number" th:text="${modules.stream().filter(m -> m.progressPercentage &gt; 0 &amp;&amp; m.progressPercentage &lt; 100).count()}">3</span>
+                                <span class="stats-number" th:text="${inProgressCount}">3</span>
                             </div>
                         </div>
                         <div class="stats-card">
@@ -95,8 +95,8 @@
                 </section>
 
                 <!-- Continue Learning Section -->
-                <div th:with="continueModule=${modules.stream().filter(m -> m.progressPercentage &gt; 0 &amp;&amp; m.progressPercentage &lt; 100).findFirst().orElse(null)}">
-                    <section th:if="${continueModule != null}" class="continue-learning-section">
+                <div th:if="${continueModule != null}">
+                    <section class="continue-learning-section">
                         <div class="continue-card">
                             <div class="continue-content">
                                 <span class="continue-badge">Lanjutkan Belajar</span>
