@@ -88,6 +88,15 @@ public class WebController {
 
         model.addAttribute("modules", modules);
         model.addAttribute("search", search);
+        
+        long completedCount = modules.stream().filter(m -> m.getProgressPercentage() != null && m.getProgressPercentage() == 100).count();
+        long inProgressCount = modules.stream().filter(m -> m.getProgressPercentage() != null && m.getProgressPercentage() > 0 && m.getProgressPercentage() < 100).count();
+        Module continueModule = modules.stream().filter(m -> m.getProgressPercentage() != null && m.getProgressPercentage() > 0 && m.getProgressPercentage() < 100).findFirst().orElse(null);
+        
+        model.addAttribute("completedCount", completedCount);
+        model.addAttribute("inProgressCount", inProgressCount);
+        model.addAttribute("continueModule", continueModule);
+        
         model.addAttribute("currentPage", "materi");
         return "materi";
     }

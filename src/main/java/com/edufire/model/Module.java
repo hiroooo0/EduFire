@@ -23,7 +23,7 @@ public class Module {
     private String title;
     private String description;
     
-    @Column(length = 2000)
+    @Column(length = 10000)
     private String content;
     
     private Integer durationMinutes;
