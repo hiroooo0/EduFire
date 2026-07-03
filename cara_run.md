@@ -2,7 +2,7 @@
                                                                                                  
   1. Buka terminal atau command prompt Anda.                                                     
   2. Masuk ke direktori/folder project ini:                                                      
-    cd /home/jojo/Documents/back/kuliah/EduFire                                                  
+    cd /yourdirectory/EduFire                                                 
   
   3. Jalankan perintah berikut untuk mengompilasi dan memulai server Spring Boot:
     ./mvnw spring-boot:run
